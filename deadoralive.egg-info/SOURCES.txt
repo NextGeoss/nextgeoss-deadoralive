@@ -1,0 +1,12 @@
+MANIFEST.in
+README.markdown
+setup.py
+deadoralive/__init__.py
+deadoralive/deadoralive.py
+deadoralive/test_deadoralive.py
+deadoralive.egg-info/PKG-INFO
+deadoralive.egg-info/SOURCES.txt
+deadoralive.egg-info/dependency_links.txt
+deadoralive.egg-info/entry_points.txt
+deadoralive.egg-info/requires.txt
+deadoralive.egg-info/top_level.txt

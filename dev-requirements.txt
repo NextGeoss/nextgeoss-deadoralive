@@ -1,0 +1,5 @@
+nose
+mock
+httpretty
+coverage
+request_ftp
