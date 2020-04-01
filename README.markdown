@@ -37,8 +37,9 @@ Python 2.6 or 2.7.
 Installation
 ------------
 
-To install run:
+To install, activate the venv and run:
 
+    . /usr/lib/ckan/deafault/bin/activate
     pip install -e git+https://github.com/NextGeoss/nextgeoss-deadoralive#egg=nextgeoss-deadoralive
 
 If you want to check a CKAN site for broken links you also need to install
