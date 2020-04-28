@@ -37,9 +37,8 @@ Python 2.6 or 2.7.
 Installation
 ------------
 
-To install, activate the venv and run:
+To install run:
 
-    . /usr/lib/ckan/deafault/bin/activate
     pip install -e git+https://github.com/NextGeoss/nextgeoss-deadoralive#egg=nextgeoss-deadoralive
 
 If you want to check a CKAN site for broken links you also need to install
@@ -60,13 +59,23 @@ Usage
 
 To check a site for broken links run:
 
-    deadoralive --url <your_site> --apikey <your_api_key>
+    deadoralive --user <your_user> --pasw <your_pass> --url <your_site> --apikey <your_api_key>
 
 Replace `<your_site>` with the URL of the CKAN or other client
 site you want to check (e.g. `http://demo.ckan.org`).
 
 Replace `<your_api_key>` with the API key of the site user that you want the
 link checker to run as.
+
+Replace `<your_user>` with the user you have created for the CMEMS organization
+used for the FTP connection.
+
+Replace `<your_pasw>` with the pass for your user you have created for the CMEMS 
+organization used for the FTP connection.
+
+In the ckanext-nextgeossdeadoralive you can change the filter to modify which organizations
+should be filtered [ckanext-nextgeossdeadoralive's config.py](https://github.com/NextGeoss/ckanext-nextgeossdeadoralive/blob/master/ckanext/deadoralive/config.py) 
+in organization_to_filter variable.
 
 If the site is a CKAN site the API key should be the CKAN API key of one of the
 users listed in the `ckanext.deadoralive.authorized_users` config setting in
@@ -82,7 +91,7 @@ To setup the link checker to run automatically you can add a cron job for it.
 On most UNIX systems you can add a cron job by running `crontab -e` to edit
 your crontab file. Add a line like the following to the file and save it:
 
-    @hourly deadoralive --url '<your_site>' --apikey <your_api_key>
+    @hourly deadoralive --user <your_user> --pasw <your_pass> --url '<your_site>' --apikey <your_api_key>
 
 As before replace `<your_site>` with the URL of the site you want to check,
 and `<your_api_key>` with an API key from the site.
@@ -129,9 +138,9 @@ If you _want_ to run multiple instances on the same machine at the same time,
 just use the `--port` option to specify a different port for each.
 For example:
 
-    deadoralive --url '<url>' --apikey <apikey> --port 4567
-    deadoralive --url '<url>' --apikey <apikey> --port 4568
-    deadoralive --url '<url>' --apikey <apikey> --port 4569
+    deadoralive --user <your_user> --pasw <your_pass> --url '<url>' --apikey <apikey> --port 4567
+    deadoralive --user <your_user> --pasw <your_pass> --url '<url>' --apikey <apikey> --port 4568
+    deadoralive --user <your_user> --pasw <your_pass> --url '<url>' --apikey <apikey> --port 4569
 
 (deadoralive doesn't actually do anything with the port, it just binds a
 socket to it to prevent any other deadoralive processes with the same port
@@ -147,9 +156,9 @@ just pass it different `--url` and `--apikey` arguments.
 For example you might setup three cron jobs to check three different sites,
 giving each job a different port so that they can run simultaneously:
 
-    @hourly deadoralive --url '<first_site>' --apikey <first_api_key> --port 4567
-    @hourly deadoralive --url '<second_site>' --apikey <second_api_key> --port 4568
-    @hourly deadoralive --url '<third_site>' --apikey <third_key> --port 4569
+    @hourly deadoralive --user <your_user> --pasw <your_pass> --url '<first_site>' --apikey <first_api_key> --port 4567
+    @hourly deadoralive --user <your_user> --pasw <your_pass> --url '<second_site>' --apikey <second_api_key> --port 4568
+    @hourly deadoralive --user <your_user> --pasw <your_pass> --url '<third_site>' --apikey <third_key> --port 4569
 
 
 API

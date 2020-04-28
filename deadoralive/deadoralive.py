@@ -20,8 +20,6 @@ import requests.exceptions
 import requests_ftp #Library for FTPConnection
 
 import datetime
-import ckanext.deadoralive.config as config
-
 class CouldNotGetResourceIDsError(Exception):
     """Raised if getting the resource IDs to check fails."""
     pass
@@ -68,7 +66,7 @@ def get_url_for_id(client_site_url, apikey, resource_id):
     return response.json()
 
 
-def check_url(url):
+def check_url(url, auth):
     """Check whether the given URL is dead or alive.
 
     Returns a dict with four keys:
@@ -88,8 +86,8 @@ def check_url(url):
     HTTP response.
 
     """
-    data_provider_cmems = config.data_provider_cmems     #Auth for CMEMS
-    data_provider_general = config.data_provider_general #Auth for SciHub, NOA and CODE-DE 
+    data_provider_cmems = auth     #Auth for CMEMS
+    print(data_provider_cmems)
     
     result = {"url": url}
     try:
@@ -99,12 +97,8 @@ def check_url(url):
             s = requests.Session()             #Raises request session with FTPAdapter
             response = s.get(url, auth=(data_provider_cmems[0],data_provider_cmems[1]))
         else:                                  #Http/Https request
-            if "http://" in url:
-                print("Conexion http")
-                response = requests.get(url)
-            elif "https://" in url:            #Auth for connection to SciHub, NOA and CODE-DE products:
-                print("Conexion https")
-                response = requests.get(url,auth=(data_provider_general[0],data_provider_general[1]))
+            print("Conexion http/https")
+            response = requests.get(url)
         result["status"] = response.status_code
         result["reason"] = response.reason
         response.raise_for_status()  # Raise if status_code is not OK.
@@ -157,7 +151,7 @@ def _get_logger():
     return logger
 
 
-def get_check_and_report(client_site_url, apikey, get_resource_ids_to_check, get_url_for_id, check_url, upsert_result):
+def get_check_and_report(client_site_url, auth, apikey, get_resource_ids_to_check, get_url_for_id, check_url, upsert_result):
     """Get links from the client site, check them, and post the results back.
 
     Get resource IDs from the client site, get the URL for each resource ID from
@@ -209,7 +203,7 @@ def get_check_and_report(client_site_url, apikey, get_resource_ids_to_check, get
         except CouldNotGetURLError:
             logger.info(u"This link checker was not authorized to access resource {0}, skipping.".format(resource_id))
             continue
-        result = check_url(url)
+        result = check_url(url, auth)
        	status = result["status"]
         reason = result["reason"]
       	if result["alive"]:
@@ -225,11 +219,14 @@ def main(args=None):
         args = sys.argv[1:]
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--user", required=True)
+    parser.add_argument("--pasw", required=True)
     parser.add_argument("--url", required=True)
     parser.add_argument("--apikey", required=True)
     parser.add_argument("--port", type=int, default=4723)
     parsed_args = parser.parse_args(args)
     client_site_url = parsed_args.url
+    auth = [parsed_args.user,parsed_args.pasw]
     if not client_site_url.endswith("/"):
         client_site_url = client_site_url + "/"
     apikey = parsed_args.apikey
@@ -246,7 +243,7 @@ def main(args=None):
                 "--port <num> option.".format(port=port, process=sys.argv[0]))
         else:
             raise
-    get_check_and_report(client_site_url, apikey, get_resources_to_check,get_url_for_id, check_url, upsert_result)
+    get_check_and_report(client_site_url, auth, apikey, get_resources_to_check,get_url_for_id, check_url, upsert_result)
 
 
 if __name__ == "__main__":
