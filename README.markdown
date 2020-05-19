@@ -59,7 +59,7 @@ Usage
 
 To check a site for broken links run:
 
-    deadoralive --user <your_user> --pasw <your_pass> --url <your_site> --apikey <your_api_key>
+    deadoralive --cmemsuser <your_user> --cmemspasw <your_pass> --url <your_site> --apikey <your_api_key>
 
 Replace `<your_site>` with the URL of the CKAN or other client
 site you want to check (e.g. `http://demo.ckan.org`).
@@ -91,7 +91,7 @@ To setup the link checker to run automatically you can add a cron job for it.
 On most UNIX systems you can add a cron job by running `crontab -e` to edit
 your crontab file. Add a line like the following to the file and save it:
 
-    @hourly deadoralive --user <your_user> --pasw <your_pass> --url '<your_site>' --apikey <your_api_key>
+    @hourly deadoralive --cmemsuser <your_user> --cmemspasw <your_pass> --url '<your_site>' --apikey <your_api_key>
 
 As before replace `<your_site>` with the URL of the site you want to check,
 and `<your_api_key>` with an API key from the site.
@@ -138,9 +138,9 @@ If you _want_ to run multiple instances on the same machine at the same time,
 just use the `--port` option to specify a different port for each.
 For example:
 
-    deadoralive --user <your_user> --pasw <your_pass> --url '<url>' --apikey <apikey> --port 4567
-    deadoralive --user <your_user> --pasw <your_pass> --url '<url>' --apikey <apikey> --port 4568
-    deadoralive --user <your_user> --pasw <your_pass> --url '<url>' --apikey <apikey> --port 4569
+    deadoralive --cmemsuser <your_user> --cmemspasw <your_pass> --url '<url>' --apikey <apikey> --port 4567
+    deadoralive --cmemsuser <your_user> --cmemspasw <your_pass> --url '<url>' --apikey <apikey> --port 4568
+    deadoralive --cmemsuser <your_user> --cmemspasw <your_pass> --url '<url>' --apikey <apikey> --port 4569
 
 (deadoralive doesn't actually do anything with the port, it just binds a
 socket to it to prevent any other deadoralive processes with the same port
@@ -156,9 +156,9 @@ just pass it different `--url` and `--apikey` arguments.
 For example you might setup three cron jobs to check three different sites,
 giving each job a different port so that they can run simultaneously:
 
-    @hourly deadoralive --user <your_user> --pasw <your_pass> --url '<first_site>' --apikey <first_api_key> --port 4567
-    @hourly deadoralive --user <your_user> --pasw <your_pass> --url '<second_site>' --apikey <second_api_key> --port 4568
-    @hourly deadoralive --user <your_user> --pasw <your_pass> --url '<third_site>' --apikey <third_key> --port 4569
+    @hourly deadoralive --cmemsuser <your_user> --cmemspasw <your_pass> --url '<first_site>' --apikey <first_api_key> --port 4567
+    @hourly deadoralive --cmemsuser <your_user> --cmemspasw <your_pass> --url '<second_site>' --apikey <second_api_key> --port 4568
+    @hourly deadoralive --cmemsuser <your_user> --cmemspasw <your_pass> --url '<third_site>' --apikey <third_key> --port 4569
 
 
 API
@@ -172,7 +172,7 @@ follows:
 * deadoralive sends the API key (from its `--apikey` option) in all HTTP
   requests as an Authorization header.
 
-  For example `deadoralive --url <url> --apikey foo` will send requests with
+  For example `deadoralive --cmemsuser <your_user> --cmemspasw <your_pass> --url <url> --apikey foo` will send requests with
   header `Authorization: foo`.
 
 * `GET /deadoralive/get_resources_to_check`

@@ -2,4 +2,4 @@ nose
 mock
 httpretty
 coverage
-request_ftp
+requests_ftp
