@@ -219,8 +219,8 @@ def main(args=None):
         args = sys.argv[1:]
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cmemsuser", required=True,help="User for FTP connection to CMEMS organization")
-    parser.add_argument("--cmemspasw", required=True,help="Password for FTP connection to CMEMS organization")
+    parser.add_argument("--cmemsuser", help="User for FTP connection to CMEMS organization",default="")
+    parser.add_argument("--cmemspasw", help="Password for FTP connection to CMEMS organization",default="")
     parser.add_argument("--url", required=True,help="URL of your CKAN site to check")
     parser.add_argument("--apikey", required=True,help="Apikey of your CKAN site to check")
     parser.add_argument("--port", type=int, default=4723)

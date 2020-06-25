@@ -68,10 +68,10 @@ Replace `<your_api_key>` with the API key of the site user that you want the
 link checker to run as.
 
 Replace `<your_user>` with the user you have created for the CMEMS organization
-used for the FTP connection.
+used for the FTP connection(Not required).
 
 Replace `<your_pasw>` with the pass for your user you have created for the CMEMS 
-organization used for the FTP connection.
+organization used for the FTP connection(Not required).
 
 In the ckanext-nextgeossdeadoralive you can change the filter to modify which organizations
 should be filtered [ckanext-nextgeossdeadoralive's config.py](https://github.com/NextGeoss/ckanext-nextgeossdeadoralive/blob/master/ckanext/deadoralive/config.py) 
