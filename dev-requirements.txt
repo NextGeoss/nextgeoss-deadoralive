@@ -1,5 +1,5 @@
-nose
-mock
-httpretty
-coverage
-requests_ftp
+nose=1.3.7
+mock=0.8.0
+httpretty=0.8.5
+coverage=5.1
+requests_ftp=0.3.1

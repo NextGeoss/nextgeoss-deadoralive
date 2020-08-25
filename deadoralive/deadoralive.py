@@ -219,14 +219,14 @@ def main(args=None):
         args = sys.argv[1:]
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cmemsuser", required=True,help="User for FTP connection to CMEMS organization")
-    parser.add_argument("--cmemspasw", required=True,help="Password for FTP connection to CMEMS organization")
+    parser.add_argument("--cmemsuser", help="User for FTP connection to CMEMS organization",default="")
+    parser.add_argument("--cmemspasw", help="Password for FTP connection to CMEMS organization",default="")
     parser.add_argument("--url", required=True,help="URL of your CKAN site to check")
     parser.add_argument("--apikey", required=True,help="Apikey of your CKAN site to check")
     parser.add_argument("--port", type=int, default=4723)
     parsed_args = parser.parse_args(args)
     client_site_url = parsed_args.url
-    auth = [parsed_args.user,parsed_args.pasw]
+    auth = [parsed_args.cmemsuser,parsed_args.cmemspasw]
     if not client_site_url.endswith("/"):
         client_site_url = client_site_url + "/"
     apikey = parsed_args.apikey
