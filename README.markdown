@@ -7,8 +7,8 @@
 [![License](https://img.shields.io/pypi/l/deadoralive.svg)](https://pypi.python.org/pypi/deadoralive/)
 
 
-Dead or Alive
-=============
+NextGeoss-DeadorAlive
+=====================
 
 Dead or Alive is a simple dead link checker service: it's a command-line script
 or cron job that checks your site for broken links and posts the results back
@@ -40,6 +40,7 @@ Installation
 To install run:
 
     pip install -e git+https://github.com/NextGeoss/nextgeoss-deadoralive#egg=nextgeoss-deadoralive
+    pip install -r https://raw.githubusercontent.com/NextGeoss/nextgeoss-deadoralive/master/dev-requirements.txt
 
 If you want to check a CKAN site for broken links you also need to install
 [ckanext-deadoralive](https://github.com/NextGeoss/ckanext-nextgeossdeadoralive) on your

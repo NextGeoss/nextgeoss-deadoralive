@@ -226,7 +226,7 @@ def main(args=None):
     parser.add_argument("--port", type=int, default=4723)
     parsed_args = parser.parse_args(args)
     client_site_url = parsed_args.url
-    auth = [parsed_args.user,parsed_args.pasw]
+    auth = [parsed_args.cmemsuser,parsed_args.cmemspasw]
     if not client_site_url.endswith("/"):
         client_site_url = client_site_url + "/"
     apikey = parsed_args.apikey
