@@ -18,6 +18,7 @@ import requests
 import requests.exceptions
 
 import requests_ftp #Library for FTPConnection
+import time         #Library for Delay
 
 import datetime
 class CouldNotGetResourceIDsError(Exception):
@@ -86,8 +87,7 @@ def check_url(url, auth):
     HTTP response.
 
     """
-    data_provider_cmems = auth     #Auth for CMEMS
-    print(data_provider_cmems)
+    data_provider_credentials = auth     #Auth for CMEMS
     
     result = {"url": url}
     try:
@@ -95,10 +95,17 @@ def check_url(url, auth):
             print("Conexion ftp")
             requests_ftp.monkeypatch_session() #Adds helpers for FTPConnection
             s = requests.Session()             #Raises request session with FTPAdapter
-            response = s.get(url, auth=(data_provider_cmems[0],data_provider_cmems[1]))
-        else:                                  #Http/Https request
-            print("Conexion http/https")
-            response = requests.get(url)
+            response = s.get(url, auth=(data_provider_credentials[0],data_provider_credentials[1]))
+        else:                                 #Http/Https request
+             s = requests.Session()
+             if "https://" in url:
+                 print("Conexion https")
+                 s.auth = (data_provider_credentials[2],data_provider_credentials[3])
+                 response = s.get(url)
+                 time.sleep(3)
+             else: 
+                 print("Conexion http")
+                 response = s.get(url)
         result["status"] = response.status_code
         result["reason"] = response.reason
         response.raise_for_status()  # Raise if status_code is not OK.
@@ -221,12 +228,14 @@ def main(args=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--cmemsuser", help="User for FTP connection to CMEMS organization",default="")
     parser.add_argument("--cmemspasw", help="Password for FTP connection to CMEMS organization",default="")
+    parser.add_argument("--scihuser", help="User for HTTPS connection to SciHub organization",default="")
+    parser.add_argument("--scihpasw", help="Password for HTTPS connection to SciHub organization",default="")
     parser.add_argument("--url", required=True,help="URL of your CKAN site to check")
     parser.add_argument("--apikey", required=True,help="Apikey of your CKAN site to check")
     parser.add_argument("--port", type=int, default=4723)
     parsed_args = parser.parse_args(args)
     client_site_url = parsed_args.url
-    auth = [parsed_args.cmemsuser,parsed_args.cmemspasw]
+    auth = [parsed_args.cmemsuser,parsed_args.cmemspasw,parsed_args.scihuser,parsed_args.scihpasw]
     if not client_site_url.endswith("/"):
         client_site_url = client_site_url + "/"
     apikey = parsed_args.apikey
