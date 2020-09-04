@@ -39,7 +39,7 @@ Installation
 
 To install run:
 
-    pip install -e git+https://github.com/NextGeoss/nextgeoss-deadoralive@v0.1.0#egg=nextgeoss-deadoralive
+    pip install -e git+https://github.com/NextGeoss/nextgeoss-deadoralive@v0.1.1#egg=nextgeoss-deadoralive
     python setup.py develop
     pip install -r dev-requirements.txt
 
