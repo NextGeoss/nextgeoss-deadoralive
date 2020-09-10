@@ -39,9 +39,14 @@ Installation
 
 To install run:
 
-    pip install -e git+https://github.com/NextGeoss/nextgeoss-deadoralive@v0.1.1#egg=nextgeoss-deadoralive
+    pip install -e git+https://github.com/NextGeoss/nextgeoss-deadoralive#egg=nextgeoss-deadoralive
     python setup.py develop
     pip install -r dev-requirements.txt
+
+To install in a docker, put this in the dockerfile:
+
+    RUN pip install -e git+https://github.com/NextGeoss/nextgeoss-deadoralive@v0.1.1#egg=nextgeoss-deadoralive
+    RUN pip install -r https://raw.githubusercontent.com/NextGeoss/nextgeoss-deadoralive/master/dev-requirements.txt
 
 If you want to check a CKAN site for broken links you also need to install
 [ckanext-deadoralive](https://github.com/NextGeoss/ckanext-nextgeossdeadoralive) on your
@@ -59,27 +64,30 @@ then do:
 Usage
 -----
 
-To check a site for broken links run:
+To check a site for broken links run this in the commandline:
 
-    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihuserpasw <your_pasw_scih> --url <your_site> --apikey <your_api_key>
+    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url <your_site> --apikey <your_api_key>
 
 Replace `<your_site>` with the URL of the CKAN or other client
-site you want to check (e.g. `http://demo.ckan.org`).
+site you want to check (e.g. `http://demo.ckan.org`)(Required).
 
 Replace `<your_api_key>` with the API key of the site user that you want the
-link checker to run as.
+link checker to run as, you can get it from your ckan site in the user logged page (Required).
 
 Replace `<your_user_cmems>` with the user you have created for the CMEMS organization
-used for the FTP connection.
+used for the FTP connection (Not required).
 
 Replace `<your_pasw_cmems>` with the pass for your user you have created for the CMEMS 
 organization used for the FTP connection.
 
 Replace `<your_user_scih>` with the user you have created for the SciHub organization
-used for the HTTPS connection.
+used for the HTTPS connection (Not required).
 
 Replace `<your_pasw_scih>` with the pass for your user you have created for the SciHub 
-organization used for the HTTPS connection.
+organization used for the HTTPS connection (Not required).
+
+Remember to create a user for CMEMS and SciHub in order to give authentication to the link checker,
+but if the link checker is not going to test against one or none them, you do not need to put those parameters.
 
 In the ckanext-nextgeossdeadoralive you can change the filter to modify which organizations
 should be filtered [ckanext-nextgeossdeadoralive's config.py](https://github.com/NextGeoss/ckanext-nextgeossdeadoralive/blob/master/ckanext/deadoralive/config.py) 
@@ -99,7 +107,7 @@ To setup the link checker to run automatically you can add a cron job for it.
 On most UNIX systems you can add a cron job by running `crontab -e` to edit
 your crontab file. Add a line like the following to the file and save it:
 
-    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihuserpasw <your_pasw_scih> --url '<your_site>' --apikey <your_api_key>
+    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<your_site>' --apikey <your_api_key>
 
 As before replace `<your_site>` with the URL of the site you want to check,
 and `<your_api_key>` with an API key from the site.
@@ -146,9 +154,9 @@ If you _want_ to run multiple instances on the same machine at the same time,
 just use the `--port` option to specify a different port for each.
 For example:
 
-    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihuserpasw <your_pasw_scih> --url '<url>' --apikey <apikey> --port 4567
-    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihuserpasw <your_pasw_scih> --url '<url>' --apikey <apikey> --port 4568
-    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihuserpasw <your_pasw_scih> --url '<url>' --apikey <apikey> --port 4569
+    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<url>' --apikey <apikey> --port 4567
+    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<url>' --apikey <apikey> --port 4568
+    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<url>' --apikey <apikey> --port 4569
 
 (deadoralive doesn't actually do anything with the port, it just binds a
 socket to it to prevent any other deadoralive processes with the same port
@@ -164,9 +172,9 @@ just pass it different `--url` and `--apikey` arguments.
 For example you might setup three cron jobs to check three different sites,
 giving each job a different port so that they can run simultaneously:
 
-    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihuserpasw <your_pasw_scih> --url '<first_site>' --apikey <first_api_key> --port 4567
-    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihuserpasw <your_pasw_scih> --url '<second_site>' --apikey <second_api_key> --port 4568
-    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihuserpasw <your_pasw_scih> --url '<third_site>' --apikey <third_key> --port 4569
+    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<first_site>' --apikey <first_api_key> --port 4567
+    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<second_site>' --apikey <second_api_key> --port 4568
+    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<third_site>' --apikey <third_key> --port 4569
 
 
 API
@@ -180,7 +188,7 @@ follows:
 * deadoralive sends the API key (from its `--apikey` option) in all HTTP
   requests as an Authorization header.
 
-  For example `deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihuserpasw <your_pasw_scih> --url <url> --apikey foo` will send requests with
+  For example `deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url <url> --apikey foo` will send requests with
   header `Authorization: foo`.
 
 * `GET /deadoralive/get_resources_to_check`
