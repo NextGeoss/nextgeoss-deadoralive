@@ -95,6 +95,7 @@ def check_url(url, auth):
             print("Conexion ftp")
             requests_ftp.monkeypatch_session() #Adds helpers for FTPConnection
             s = requests.Session()             #Raises request session with FTPAdapter
+            s.verify = False
             response = s.get(url, auth=(data_provider_credentials[0],data_provider_credentials[1]))
         else:                                 #Http/Https request
              s = requests.Session()
