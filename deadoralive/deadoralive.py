@@ -37,7 +37,7 @@ def get_resources_to_check(client_site_url, apikey):
     """
     
     url = client_site_url + u"deadoralive/get_resources_to_check"
-    response = requests.get(url, headers=dict(Authorization=apikey))
+    response = requests.get(url, headers=dict(Authorization=apikey), verify=False)
     if not response.ok:
       	 raise CouldNotGetResourceIDsError(u"Couldn't get resource IDs to check: {code} {reason}".format(code=response.status_code, reason=response.reason))
     return response.json()
@@ -60,7 +60,7 @@ def get_url_for_id(client_site_url, apikey, resource_id):
     # TODO: Handle invalid responses from the client site.
     url = client_site_url + u"deadoralive/get_url_for_resource_id"
     params = {"resource_id": resource_id}
-    response = requests.get(url, headers=dict(Authorization=apikey), params=params)
+    response = requests.get(url, headers=dict(Authorization=apikey), params=params, verify=False)
     if not response.ok:
         raise CouldNotGetURLError(u"Couldn't get URL for resource {id}: {code} {reason}".format(id=resource_id, code=response.status_code,reason=response.reason))
 
@@ -95,7 +95,6 @@ def check_url(url, auth):
             print("Conexion ftp")
             requests_ftp.monkeypatch_session() #Adds helpers for FTPConnection
             s = requests.Session()             #Raises request session with FTPAdapter
-            s.verify = False
             response = s.get(url, auth=(data_provider_credentials[0],data_provider_credentials[1]))
         else:                                 #Http/Https request
              s = requests.Session()
@@ -143,7 +142,7 @@ def upsert_result(client_site_url, apikey, resource_id, result):
     url = client_site_url + u"deadoralive/upsert"
     params = result.copy()
     params["resource_id"] = resource_id
-    requests.post(url, headers=dict(Authorization=apikey), params=params)
+    requests.post(url, headers=dict(Authorization=apikey), params=params, verify=False)
 
 
 def _get_logger():
