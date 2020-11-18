@@ -45,7 +45,7 @@ To install run:
 
 To install in a docker, put this in the dockerfile:
 
-    RUN pip install -e git+https://github.com/NextGeoss/nextgeoss-deadoralive@v0.1.1#egg=nextgeoss-deadoralive
+    RUN pip install -e git+https://github.com/NextGeoss/nextgeoss-deadoralive@v0.1.4#egg=nextgeoss-deadoralive
     RUN pip install -r https://raw.githubusercontent.com/NextGeoss/nextgeoss-deadoralive/master/dev-requirements.txt
 
 If you want to check a CKAN site for broken links you also need to install
@@ -66,7 +66,7 @@ Usage
 
 To check a site for broken links run this in the commandline:
 
-    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url <your_site> --apikey <your_api_key>
+    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --ncmruser <your_user_ncmr> --ncmrpasw <your_pasw_ncmr> --vitouser <your_user_vito> --scihpasw <your_pasw_vito> --url <your_site> --apikey <your_api_key>
 
 Replace `<your_site>` with the URL of the CKAN or other client
 site you want to check (e.g. `http://demo.ckan.org`)(Required).
@@ -84,6 +84,18 @@ Replace `<your_user_scih>` with the user you have created for the SciHub organiz
 used for the HTTPS connection (Not required).
 
 Replace `<your_pasw_scih>` with the pass for your user you have created for the SciHub 
+organization used for the HTTPS connection (Not required).
+
+Replace `<your_user_ncmr>` with the user you have created for the Nasa-CMR organization
+used for the HTTPS connection (Not required).
+
+Replace `<your_pasw_ncmr>` with the pass for your user you have created for the Nasa-CMR 
+organization used for the HTTPS connection (Not required).
+
+Replace `<your_user_vito>` with the user you have created for the VITO organization
+used for the HTTPS connection (Not required).
+
+Replace `<your_pasw_vito>` with the pass for your user you have created for the VITO 
 organization used for the HTTPS connection (Not required).
 
 Remember to create a user for CMEMS and SciHub in order to give authentication to the link checker,
@@ -107,7 +119,7 @@ To setup the link checker to run automatically you can add a cron job for it.
 On most UNIX systems you can add a cron job by running `crontab -e` to edit
 your crontab file. Add a line like the following to the file and save it:
 
-    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<your_site>' --apikey <your_api_key>
+    @hourly deadoralive (add here the credentials specified above) --url '<your_site>' --apikey <your_api_key>
 
 As before replace `<your_site>` with the URL of the site you want to check,
 and `<your_api_key>` with an API key from the site.
@@ -154,9 +166,9 @@ If you _want_ to run multiple instances on the same machine at the same time,
 just use the `--port` option to specify a different port for each.
 For example:
 
-    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<url>' --apikey <apikey> --port 4567
-    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<url>' --apikey <apikey> --port 4568
-    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<url>' --apikey <apikey> --port 4569
+    deadoralive (add here the credentials specified above) --url '<url>' --apikey <apikey> --port 4567
+    deadoralive (add here the credentials specified above) --url '<url>' --apikey <apikey> --port 4568
+    deadoralive (add here the credentials specified above) --url '<url>' --apikey <apikey> --port 4569
 
 (deadoralive doesn't actually do anything with the port, it just binds a
 socket to it to prevent any other deadoralive processes with the same port
@@ -172,9 +184,9 @@ just pass it different `--url` and `--apikey` arguments.
 For example you might setup three cron jobs to check three different sites,
 giving each job a different port so that they can run simultaneously:
 
-    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<first_site>' --apikey <first_api_key> --port 4567
-    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<second_site>' --apikey <second_api_key> --port 4568
-    @hourly deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url '<third_site>' --apikey <third_key> --port 4569
+    @hourly deadoralive (add here the credentials specified above) --url '<first_site>' --apikey <first_api_key> --port 4567
+    @hourly deadoralive (add here the credentials specified above) --url '<second_site>' --apikey <second_api_key> --port 4568
+    @hourly deadoralive (add here the credentials specified above) --url '<third_site>' --apikey <third_key> --port 4569
 
 
 API
