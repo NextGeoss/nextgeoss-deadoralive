@@ -92,19 +92,29 @@ def check_url(url, auth):
     result = {"url": url}
     try:
         if "ftp://" in url and "cmems" in url:                    #Connection for CMEMS products(ftp protocol)
-            print("Conexion ftp")
+            print("Ftp Connection")
             requests_ftp.monkeypatch_session() #Adds helpers for FTPConnection
             s = requests.Session()             #Raises request session with FTPAdapter
             response = s.get(url, auth=(data_provider_credentials[0],data_provider_credentials[1]))
         else:                                 #Http/Https request
              s = requests.Session()
-             if "https://" in url:
-                 print("Conexion https")
+             if "esa" in url and "scihub" in url:
+                 print("ESA-scihub Connection")
                  s.auth = (data_provider_credentials[2],data_provider_credentials[3])
                  response = s.get(url)
                  time.sleep(3)
+             elif "nasa" in url and "cmr" in url:
+                 print("Nasa-cmr Connection")
+                 s.auth = (data_provider_credentials[4],data_provider_credentials[5])
+                 response = s.get(url)
+                 time.sleep(3)
+             elif "vito" in url:
+                 print("Vito Connection")
+                 s.auth = (data_provider_credentials[6],data_provider_credentials[7])
+                 response = s.get(url)
+                 time.sleep(3)
              else: 
-                 print("Conexion http")
+                 print("Http Connection")
                  response = s.get(url)
         result["status"] = response.status_code
         result["reason"] = response.reason
@@ -226,16 +236,20 @@ def main(args=None):
         args = sys.argv[1:]
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cmemsuser", help="User for FTP connection to CMEMS organization",default="")
-    parser.add_argument("--cmemspasw", help="Password for FTP connection to CMEMS organization",default="")
-    parser.add_argument("--scihuser", help="User for HTTPS connection to SciHub organization",default="")
-    parser.add_argument("--scihpasw", help="Password for HTTPS connection to SciHub organization",default="")
+    parser.add_argument("--cmemsuser", help="User for connection to CMEMS organization",default="")
+    parser.add_argument("--cmemspasw", help="Password for connection to CMEMS organization",default="")
+    parser.add_argument("--scihuser", help="User for  connection to SciHub organization",default="")
+    parser.add_argument("--scihpasw", help="Password for connection to SciHub organization",default="")
+    parser.add_argument("--ncmruser", help="User for connection to Nasa-CMR organization",default="")
+    parser.add_argument("--ncmrpasw", help="Password for connection to Nasa-CMR organization",default="")
+    parser.add_argument("--vitouser", help="User for connection to Vito organization",default="")
+    parser.add_argument("--vitopasw", help="Password for connection to Vito organization",default="")
     parser.add_argument("--url", required=True,help="URL of your CKAN site to check")
     parser.add_argument("--apikey", required=True,help="Apikey of your CKAN site to check")
     parser.add_argument("--port", type=int, default=4723)
     parsed_args = parser.parse_args(args)
     client_site_url = parsed_args.url
-    auth = [parsed_args.cmemsuser,parsed_args.cmemspasw,parsed_args.scihuser,parsed_args.scihpasw]
+    auth = [parsed_args.cmemsuser,parsed_args.cmemspasw,parsed_args.scihuser,parsed_args.scihpasw,parsed_args.ncmruser,parsed_args.ncmrpasw,parsed_args.vitouser,parsed_args.vitopasw]
     if not client_site_url.endswith("/"):
         client_site_url = client_site_url + "/"
     apikey = parsed_args.apikey
