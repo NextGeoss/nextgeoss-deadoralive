@@ -66,7 +66,7 @@ Usage
 
 To check a site for broken links run this in the commandline:
 
-    deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --ncmruser <your_user_ncmr> --ncmrpasw <your_pasw_ncmr> --vitouser <your_user_vito> --scihpasw <your_pasw_vito> --url <your_site> --apikey <your_api_key>
+    deadoralive --org <org_to_check> --user <user_org> --pasw <pasw_org> --url <your_site> --apikey <your_api_key>
 
 Replace `<your_site>` with the URL of the CKAN or other client
 site you want to check (e.g. `http://demo.ckan.org`)(Required).
@@ -74,29 +74,13 @@ site you want to check (e.g. `http://demo.ckan.org`)(Required).
 Replace `<your_api_key>` with the API key of the site user that you want the
 link checker to run as, you can get it from your ckan site in the user logged page (Required).
 
-Replace `<your_user_cmems>` with the user you have created for the CMEMS organization
-used for the FTP connection (Not required).
+Replace `<org_to_check>` with the organization to check for (Not required, if it is empty, the client checks all the organizations).
 
-Replace `<your_pasw_cmems>` with the pass for your user you have created for the CMEMS 
-organization used for the FTP connection.
+Replace `<user_org>` with the user you have created for the 
+organization to check (Not required).
 
-Replace `<your_user_scih>` with the user you have created for the SciHub organization
-used for the HTTPS connection (Not required).
-
-Replace `<your_pasw_scih>` with the pass for your user you have created for the SciHub 
-organization used for the HTTPS connection (Not required).
-
-Replace `<your_user_ncmr>` with the user you have created for the Nasa-CMR organization
-used for the HTTPS connection (Not required).
-
-Replace `<your_pasw_ncmr>` with the pass for your user you have created for the Nasa-CMR 
-organization used for the HTTPS connection (Not required).
-
-Replace `<your_user_vito>` with the user you have created for the VITO organization
-used for the HTTPS connection (Not required).
-
-Replace `<your_pasw_vito>` with the pass for your user you have created for the VITO 
-organization used for the HTTPS connection (Not required).
+Replace `<pasw_org>` with the pasword for the user of the 
+organization to check (Not required).
 
 Remember to create a user for CMEMS and SciHub in order to give authentication to the link checker,
 but if the link checker is not going to test against one or none them, you do not need to put those parameters.
@@ -200,7 +184,7 @@ follows:
 * deadoralive sends the API key (from its `--apikey` option) in all HTTP
   requests as an Authorization header.
 
-  For example `deadoralive --cmemsuser <your_user_cmems> --cmemspasw <your_pasw_cmems> --scihuser <your_user_scih> --scihpasw <your_pasw_scih> --url <url> --apikey foo` will send requests with
+  For example `deadoralive --org <org_to_check> --user <user_org> --pasw <pasw_org> --url <url> --apikey foo` will send requests with
   header `Authorization: foo`.
 
 * `GET /deadoralive/get_resources_to_check`

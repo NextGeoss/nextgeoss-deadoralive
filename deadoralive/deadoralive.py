@@ -26,7 +26,7 @@ class CouldNotGetResourceIDsError(Exception):
     pass
 
 
-def get_resources_to_check(client_site_url, apikey):
+def get_resources_to_check(client_site_url, apikey, org_check):
     """Return a list of resource IDs to check for broken links.
 
     Calls the client site's API to get a list of resource IDs.
@@ -36,7 +36,7 @@ def get_resources_to_check(client_site_url, apikey):
 
     """
     
-    url = client_site_url + u"deadoralive/get_resources_to_check"
+    url = client_site_url + u"deadoralive/get_resources_to_check?org_check=" + org_check
     response = requests.get(url, headers=dict(Authorization=apikey))
     if not response.ok:
       	 raise CouldNotGetResourceIDsError(u"Couldn't get resource IDs to check: {code} {reason}".format(code=response.status_code, reason=response.reason))
@@ -67,7 +67,7 @@ def get_url_for_id(client_site_url, apikey, resource_id):
     return response.json()
 
 
-def check_url(url, auth):
+def check_url(url, auth, org_check):
     """Check whether the given URL is dead or alive.
 
     Returns a dict with four keys:
@@ -91,30 +91,20 @@ def check_url(url, auth):
     
     result = {"url": url}
     try:
-        if "ftp://" in url and "cmems" in url:                    #Connection for CMEMS products(ftp protocol)
+        if "ftp://" in url:                    #Connection for FTP protocol
             print("Ftp Connection")
             requests_ftp.monkeypatch_session() #Adds helpers for FTPConnection
             s = requests.Session()             #Raises request session with FTPAdapter
             response = s.get(url, auth=(data_provider_credentials[0],data_provider_credentials[1]))
-        else:                                 #Http/Https request
+        else:                                  #Http/Https request
              s = requests.Session()
-             if "esa" in url and "scihub" in url:
-                 print("ESA-scihub Connection")
-                 s.auth = (data_provider_credentials[2],data_provider_credentials[3])
+             if data_provider_credentials[0]:  #Connection that needs auth
+                 print("Connection with credentials")
+                 s.auth = (data_provider_credentials[0],data_provider_credentials[1])
                  response = s.get(url)
                  time.sleep(3)
-             elif "nasa" in url and "cmr" in url:
-                 print("Nasa-cmr Connection")
-                 s.auth = (data_provider_credentials[4],data_provider_credentials[5])
-                 response = s.get(url)
-                 time.sleep(3)
-             elif "vito" in url:
-                 print("Vito Connection")
-                 s.auth = (data_provider_credentials[6],data_provider_credentials[7])
-                 response = s.get(url)
-                 time.sleep(3)
-             else: 
-                 print("Http Connection")
+             else:                             #Connection that doesnt need auth
+                 print("Connection without credentials")
                  response = s.get(url)
         result["status"] = response.status_code
         result["reason"] = response.reason
@@ -168,7 +158,7 @@ def _get_logger():
     return logger
 
 
-def get_check_and_report(client_site_url, auth, apikey, get_resource_ids_to_check, get_url_for_id, check_url, upsert_result):
+def get_check_and_report(client_site_url, org_check, auth, apikey, get_resource_ids_to_check, get_url_for_id, check_url, upsert_result):
     """Get links from the client site, check them, and post the results back.
 
     Get resource IDs from the client site, get the URL for each resource ID from
@@ -212,7 +202,7 @@ def get_check_and_report(client_site_url, auth, apikey, get_resource_ids_to_chec
     """
     logger = _get_logger()
     logger.info(u"Getting list of resources to check in agent deadoralive")   
-    resource_ids = get_resource_ids_to_check(client_site_url, apikey)
+    resource_ids = get_resource_ids_to_check(client_site_url, apikey, org_check)
     logger.info(u"List of resources completed")
     for resource_id in resource_ids:
         try:
@@ -220,7 +210,7 @@ def get_check_and_report(client_site_url, auth, apikey, get_resource_ids_to_chec
         except CouldNotGetURLError:
             logger.info(u"This link checker was not authorized to access resource {0}, skipping.".format(resource_id))
             continue
-        result = check_url(url, auth)
+        result = check_url(url, auth, org_check)
        	status = result["status"]
         reason = result["reason"]
       	if result["alive"]:
@@ -236,20 +226,16 @@ def main(args=None):
         args = sys.argv[1:]
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cmemsuser", help="User for connection to CMEMS organization",default="")
-    parser.add_argument("--cmemspasw", help="Password for connection to CMEMS organization",default="")
-    parser.add_argument("--scihuser", help="User for  connection to SciHub organization",default="")
-    parser.add_argument("--scihpasw", help="Password for connection to SciHub organization",default="")
-    parser.add_argument("--ncmruser", help="User for connection to Nasa-CMR organization",default="")
-    parser.add_argument("--ncmrpasw", help="Password for connection to Nasa-CMR organization",default="")
-    parser.add_argument("--vitouser", help="User for connection to Vito organization",default="")
-    parser.add_argument("--vitopasw", help="Password for connection to Vito organization",default="")
+    parser.add_argument("--org", help="Password for the connection to the organization",default="All")
+    parser.add_argument("--user", help="User for the connection to the organization",default="")
+    parser.add_argument("--pasw", help="Password for the connection to the organization",default="")
     parser.add_argument("--url", required=True,help="URL of your CKAN site to check")
     parser.add_argument("--apikey", required=True,help="Apikey of your CKAN site to check")
     parser.add_argument("--port", type=int, default=4723)
     parsed_args = parser.parse_args(args)
     client_site_url = parsed_args.url
-    auth = [parsed_args.cmemsuser,parsed_args.cmemspasw,parsed_args.scihuser,parsed_args.scihpasw,parsed_args.ncmruser,parsed_args.ncmrpasw,parsed_args.vitouser,parsed_args.vitopasw]
+    org_check = parsed_args.org
+    auth = [parsed_args.user,parsed_args.pasw]
     if not client_site_url.endswith("/"):
         client_site_url = client_site_url + "/"
     apikey = parsed_args.apikey
@@ -266,7 +252,7 @@ def main(args=None):
                 "--port <num> option.".format(port=port, process=sys.argv[0]))
         else:
             raise
-    get_check_and_report(client_site_url, auth, apikey, get_resources_to_check,get_url_for_id, check_url, upsert_result)
+    get_check_and_report(client_site_url, org_check, auth, apikey, get_resources_to_check,get_url_for_id, check_url, upsert_result)
 
 
 if __name__ == "__main__":
